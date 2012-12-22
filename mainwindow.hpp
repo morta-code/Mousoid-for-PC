@@ -16,11 +16,11 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     
-private slots:
+public slots:
     void toggleServer();
     void applyChanges();
     void changeSettings();
-    void addClient(QString name);
+    void addClient(QString &name);
 
 private:
     Ui::MainWindow *ui;

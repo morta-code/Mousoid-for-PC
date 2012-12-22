@@ -9,19 +9,17 @@ MainWindow::MainWindow(QWidget *parent) :
     serverState = 0;
     ui->setupUi(this);
 
-    ui->mainToolBar->addAction(ui->menuMousoid->addAction(QIcon::fromTheme(""), tr("Close to systray"), this, SLOT(close()), QKeySequence("ALT+F4")));
     ui->mainToolBar->addAction(ui->menuMousoid->addAction(QIcon::fromTheme("exit"), tr("Exit"), qApp, SLOT(quit()), QKeySequence("CTRL+q")));
+    ui->mainToolBar->addAction(ui->menuMousoid->addAction(QIcon::fromTheme(""), tr("Close to systray"), this, SLOT(close()), QKeySequence("ALT+F4")));
 
-    connect(ui->startstopButton, SIGNAL(clicked()), this, SLOT(toggleServer()));
-    connect(ui->applyButton, SIGNAL(clicked()), this, SLOT(applyChanges()));
+    connect(ui->buttonToggle, SIGNAL(clicked()), this, SLOT(toggleServer()));
+    connect(ui->buttonApply, SIGNAL(clicked()), this, SLOT(applyChanges()));
 
-    connect(ui->multipleCheck, SIGNAL(toggled(bool)), this, SLOT(changeSettings()));
-    connect(ui->wirelessRadio, SIGNAL(toggled(bool)), this, SLOT(changeSettings()));
-    connect(ui->bluetotthRadio, SIGNAL(toggled(bool)), this, SLOT(changeSettings()));
-    connect(ui->bothRadio, SIGNAL(toggled(bool)), this, SLOT(changeSettings()));
+    /// @todo init gui signals and slots
 
+    /// @todo name itt és ott
     MousoidCore::create();
-    connect(MousoidCore::self(), SIGNAL(clientConnected(QString&)), this, SLOT(addClient(QString)));
+    connect(MousoidCore::self(), SIGNAL(clientConnected(QString&)), this, SLOT(addClient(QString&)));
 }
 
 MainWindow::~MainWindow()
@@ -33,52 +31,53 @@ void MainWindow::toggleServer()
 {
     serverState = serverState ^ Mousoid::SERVER_ENABLED;
     if(serverState & Mousoid::SERVER_ENABLED){
-        ui->startstopButton->setText(tr("Stop"));
+        ui->buttonToggle->setText(tr("Stop server"));
     }else{
-        ui->startstopButton->setText(tr("Start"));
+        ui->buttonToggle->setText(tr("Start server"));
     }
-    MousoidCore::self()->changeServer(serverState);
+    MousoidCore::self()->changeServerState(serverState);
 }
 
 void MainWindow::applyChanges()
 {
-    ui->applyButton->setDisabled(true);
-    MousoidCore::self()->changeServer(serverState);
+    ui->buttonApply->setDisabled(true);
+    MousoidCore::self()->changeServerState(serverState);
 }
 
 void MainWindow::changeSettings()
 {
-    ui->applyButton->setEnabled(true);
-    if(ui->multipleCheck->isChecked()){
-        serverState |= Mousoid::MORE_ALLOWED;
-    } else {
-        serverState &= ~Mousoid::MORE_ALLOWED;
-        if(ui->bothRadio->isChecked()){
-            ui->wirelessRadio->setChecked(true);
-            return;
-        }
-    }
+    ui->buttonApply->setEnabled(true);
+    /// @todo
+//    if(ui->multipleCheck->isChecked()){
+//        serverState |= Mousoid::MORE_ALLOWED;
+//    } else {
+//        serverState &= ~Mousoid::MORE_ALLOWED;
+//        if(ui->bothRadio->isChecked()){
+//            ui->wirelessRadio->setChecked(true);
+//            return;
+//        }
+//    }
 
-    if(ui->wirelessRadio->isChecked())
-        serverState |= Mousoid::WIRELESS_ON;
-    else
-        serverState &= Mousoid::WIRELESS_ON;
-
-
-    if(ui->bluetotthRadio->isChecked())
-        serverState |= Mousoid::BLUETOOTH_ON;
-    else
-        serverState &= Mousoid::BLUETOOTH_ON;
+//    if(ui->wirelessRadio->isChecked())
+//        serverState |= Mousoid::WIRELESS_ON;
+//    else
+//        serverState &= Mousoid::WIRELESS_ON;
 
 
-    if(ui->bothRadio->isChecked()){
-        serverState |= Mousoid::WIRELESS_ON;
-        serverState |= Mousoid::BLUETOOTH_ON;
-    }
+//    if(ui->bluetotthRadio->isChecked())
+//        serverState |= Mousoid::BLUETOOTH_ON;
+//    else
+//        serverState &= Mousoid::BLUETOOTH_ON;
+
+
+//    if(ui->bothRadio->isChecked()){
+//        serverState |= Mousoid::WIRELESS_ON;
+//        serverState |= Mousoid::BLUETOOTH_ON;
+//    }
 
 }
 
-void MainWindow::addClient(QString name)
+void MainWindow::addClient(QString &name)
 {
     /// @todo
 }

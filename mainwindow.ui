@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>259</width>
-    <height>235</height>
+    <width>437</width>
+    <height>337</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,112 +20,161 @@
    <enum>Qt::ToolButtonTextBesideIcon</enum>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QCheckBox" name="multipleCheck">
-        <property name="text">
-         <string>Allow multiple Mousoids</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="minimumSize">
-         <size>
-          <width>220</width>
-          <height>120</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Connection method</string>
-        </property>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>31</y>
-           <width>188</width>
-           <height>80</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QRadioButton" name="wirelessRadio">
-            <property name="text">
-             <string>Wireless LAN</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="bluetotthRadio">
-            <property name="text">
-             <string>Bluetooth</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="bothRadio">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Both (only for multiple)</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="spacing">
-         <number>6</number>
-        </property>
-        <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
-        </property>
+       <layout class="QVBoxLayout" name="settingsGroup">
         <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QCheckBox" name="checkEthernet">
+          <property name="text">
+           <string>Ethernet</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+          <property name="checked">
+           <bool>true</bool>
           </property>
-         </spacer>
+         </widget>
         </item>
-        <item alignment="Qt::AlignRight">
-         <widget class="QPushButton" name="applyButton">
+        <item>
+         <widget class="QCheckBox" name="checkBluetooth">
           <property name="enabled">
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>Apply changes</string>
+           <string>Bluetooth</string>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item alignment="Qt::AlignRight">
-         <widget class="QPushButton" name="startstopButton">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Security</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QRadioButton" name="radioAllowed">
+             <property name="text">
+              <string>Allow allowed</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioBlocked">
+             <property name="text">
+              <string>Block blocked</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioOne">
+             <property name="text">
+              <string>Allow one</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioAll">
+             <property name="text">
+              <string>Allow all</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="allowGroup">
+        <item>
+         <widget class="QLabel" name="labelAllowedList">
           <property name="text">
-           <string>Start</string>
+           <string>Allowed clients</string>
+          </property>
+          <property name="buddy">
+           <cstring>listAllowed</cstring>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listAllowed"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="blockGroup">
+        <item>
+         <widget class="QLabel" name="labelBlockedList">
+          <property name="mouseTracking">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Blocked clients</string>
+          </property>
+          <property name="buddy">
+           <cstring>listBlocked</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listBlocked"/>
         </item>
        </layout>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3"/>
+     <layout class="QHBoxLayout" name="buttonsGroup">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonApply">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonToggle">
+        <property name="text">
+         <string>Start server</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -134,8 +183,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>259</width>
-     <height>20</height>
+     <width>437</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMousoid">
@@ -158,20 +207,103 @@
  <resources/>
  <connections>
   <connection>
-   <sender>multipleCheck</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>bothRadio</receiver>
-   <slot>setEnabled(bool)</slot>
+   <sender>checkEthernet</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeSettings()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>111</x>
-     <y>58</y>
+     <x>78</x>
+     <y>55</y>
     </hint>
     <hint type="destinationlabel">
-     <x>187</x>
-     <y>172</y>
+     <x>106</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBluetooth</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>62</x>
+     <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioAllowed</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>42</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioBlocked</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>168</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>125</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioOne</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>82</x>
+     <y>307</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioAll</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>225</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>48</x>
+     <y>288</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>changeSettings()</slot>
+ </slots>
 </ui>
