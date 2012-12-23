@@ -15,16 +15,21 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    
+
+    void addClient(QString &name){
+        ;
+    }
+
 public slots:
     void toggleServer();
     void applyChanges();
     void changeSettings();
-    void addClient(QString &name);
+    void quit();
 
-private:
+private:    
     Ui::MainWindow *ui;
     uchar serverState;
+    uchar ethernetLimitations;
 };
 
 #endif // MAINWINDOW_HPP
