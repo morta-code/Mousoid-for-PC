@@ -1,31 +1,26 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
-#include <QDebug>
 
-void fakeaddclient(QString& str){
-    qDebug() << "Client connected" << str;
+MainWindow *instance = 0;
+
+void new_client(char* str){
+    QString name(str);
+    instance->showConnectedNotification(name);
 }
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    serverState = Mousoid::WIRELESS_ON;
-    ethernetLimitations = Mousoid::NO_LIMITATION;
-    ui->setupUi(this);
-
-    ui->mainToolBar->addAction(ui->menuMousoid->addAction(QIcon::fromTheme("exit"), tr("Exit"), this, SLOT(quit()), QKeySequence("CTRL+q")));
-    ui->mainToolBar->addAction(ui->menuMousoid->addAction(QIcon::fromTheme(""), tr("Close to systray"), this, SLOT(close()), QKeySequence("ALT+F4")));
-
-    connect(ui->buttonToggle, SIGNAL(clicked()), this, SLOT(toggleServer()));
-    connect(ui->buttonApply, SIGNAL(clicked()), this, SLOT(applyChanges()));
-
+    instance = this;
     /// @todo init gui signals and slots
 
     /// @todo name itt és ott
     MousoidCore::create();
-    qDebug() << "Server created";
-    MousoidCore::funcForNewClient(fakeaddclient);
+    MousoidCore::funcForNewClient(new_client);
+
+    initializeWindow();
+    initializeSysTray();
 }
 
 MainWindow::~MainWindow()
@@ -33,21 +28,98 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::showConnectedNotification(QString &name)
+{
+    trayIcon->showMessage(tr("Mousoid"), name + tr(" connected"), QSystemTrayIcon::Information);
+}
+
+/// @todo Checkbox
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (trayIcon->isVisible()) {
+        QMessageBox::information(this, tr("Systray"),
+                                 tr("The program will keep running in the "
+                                    "system tray. To terminate the program, "
+                                    "choose <b>Quit</b> in the context menu "
+                                    "of the system tray entry."));
+        hide();
+        event->ignore();
+    }
+}
+
+void MainWindow::initializeWindow()
+{
+    serverState = Mousoid::WIRELESS_ON;
+    ethernetLimitations = Mousoid::NO_LIMITATION;
+    ui->setupUi(this);
+
+    actionQuit = new QAction(QIcon::fromTheme("exit"), tr("Exit"), this);
+    actionToggleWindow = new QAction(QIcon::fromTheme("window-close"), tr("Hide window"), this);
+    ui->mainToolBar->addAction(actionQuit);
+    ui->mainToolBar->addAction(actionToggleWindow);
+
+    connect(actionToggleWindow, SIGNAL(triggered()), this, SLOT(toggleWindow()));
+    connect(actionQuit, SIGNAL(triggered()), this, SLOT(quit()));
+    connect(ui->buttonToggle, SIGNAL(clicked()), this, SLOT(toggleServer()));
+    connect(ui->buttonApply, SIGNAL(clicked()), this, SLOT(applyChanges()));
+}
+
+void MainWindow::initializeSysTray()
+{
+    trayIconMenu = new QMenu(this);
+
+    actionToggleServer = new QAction(tr("Start server"), this);
+    connect(actionToggleServer, SIGNAL(triggered()), this, SLOT(toggleServer()));
+
+    trayIconMenu->addAction(actionToggleWindow);
+    trayIconMenu->addAction(actionToggleServer);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(actionQuit);
+
+    trayIcon = new QSystemTrayIcon(QIcon(":/mousoid/icon.png"), this);
+    QByteArray category = qgetenv("SNI_CATEGORY");
+    if (!category.isEmpty()) {
+        trayIcon->setProperty("_qt_sni_category", QString::fromLocal8Bit(category));
+    }
+    trayIcon->setContextMenu(trayIconMenu);
+    trayIcon->show();
+}
+
 void MainWindow::toggleServer()
 {
     serverState ^= Mousoid::SERVER_ENABLED;
     if(serverState & Mousoid::SERVER_ENABLED){
         ui->buttonToggle->setText(tr("Stop server"));
+        actionToggleServer->setText(tr("Stop server"));
     }else{
         ui->buttonToggle->setText(tr("Start server"));
+        actionToggleServer->setText(tr("Start server"));
     }
     MousoidCore::changeServerState(serverState);
+    MousoidCore::changeLimitations(ethernetLimitations);
+    ui->buttonApply->setDisabled(true);
+}
+
+void MainWindow::toggleWindow()
+{
+    if(this->isHidden()){
+        actionToggleWindow->setText(tr("Hide window"));
+        actionToggleWindow->setIcon(QIcon::fromTheme("window-close"));
+        showNormal();
+    }
+    else{
+        actionToggleWindow->setText(tr("Restore window"));
+        actionToggleWindow->setIcon(QIcon::fromTheme("view-restore"));
+        hide();
+    }
 }
 
 void MainWindow::applyChanges()
 {
+    /// @todo getState getLimitations
     ui->buttonApply->setDisabled(true);
     MousoidCore::changeServerState(serverState);
+    MousoidCore::changeLimitations(ethernetLimitations);
 }
 
 void MainWindow::changeSettings()
@@ -83,3 +155,4 @@ void MainWindow::quit()
     MousoidCore::destroy();
     qApp->quit();
 }
+

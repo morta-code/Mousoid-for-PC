@@ -1,7 +1,11 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include <QSystemTrayIcon>
 #include <QMainWindow>
+#include <QDebug>
+#include <QMessageBox>
+#include <QCloseEvent>
 #include <mousoidcore.hpp>
 
 namespace Ui {
@@ -16,20 +20,32 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void addClient(QString &name){
-        ;
-    }
+    void showConnectedNotification(QString &name);
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 public slots:
     void toggleServer();
+    void toggleWindow();
     void applyChanges();
     void changeSettings();
     void quit();
 
-private:    
+private:
+    void initializeWindow();
+    void initializeSysTray();
+
     Ui::MainWindow *ui;
     uchar serverState;
     uchar ethernetLimitations;
+
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayIconMenu;
+
+    QAction *actionToggleWindow;
+    QAction *actionToggleServer;
+    QAction *actionQuit;
 };
 
 #endif // MAINWINDOW_HPP

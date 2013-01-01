@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Mousoid</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/mousoid/icon</normaloff>:/mousoid/icon</iconset>
+  </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
@@ -187,12 +191,6 @@
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuMousoid">
-    <property name="title">
-     <string>Mousoid</string>
-    </property>
-   </widget>
-   <addaction name="menuMousoid"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

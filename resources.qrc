@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/mousoid">
+        <file>icon.png</file>
+    </qresource>
+</RCC>

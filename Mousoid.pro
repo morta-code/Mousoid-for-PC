@@ -24,3 +24,9 @@ else:unix:!macx: LIBS += -L$$PWD/../MousoidCore_build_Debug/ -lMousoidCore
 
 INCLUDEPATH += $$PWD/../MousoidCore
 DEPENDPATH += $$PWD/../MousoidCore
+
+OTHER_FILES += \
+    icon.png
+
+RESOURCES += \
+    resources.qrc
