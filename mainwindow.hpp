@@ -39,6 +39,7 @@ private:
     Ui::MainWindow *ui;
     uchar serverState;
     uchar ethernetLimitations;
+    bool showCloseNotification;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;

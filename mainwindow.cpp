@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     instance = this;
+    showCloseNotification = true;
     /// @todo init gui signals and slots
 
     /// @todo name itt és ott
@@ -33,16 +34,18 @@ void MainWindow::showConnectedNotification(QString &name)
     trayIcon->showMessage(tr("Mousoid"), name + tr(" connected"), QSystemTrayIcon::Information);
 }
 
-/// @todo Checkbox
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (trayIcon->isVisible()) {
-        QMessageBox::information(this, tr("Systray"),
+    if (trayIcon->isVisible() && showCloseNotification) {
+        if(QMessageBox::information(this, tr("Mousoid"),
                                  tr("The program will keep running in the "
                                     "system tray. To terminate the program, "
-                                    "choose <b>Quit</b> in the context menu "
-                                    "of the system tray entry."));
-        hide();
+                                    "choose <b>Exit</b> in the context menu "
+                                    "of the system tray entry."), tr("OK"), tr("OK, never show again"))
+                == 1){
+            showCloseNotification = false;
+        }
+        toggleWindow();
         event->ignore();
     }
 }
