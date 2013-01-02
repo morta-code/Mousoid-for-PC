@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>437</width>
-    <height>337</height>
+    <width>491</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,12 @@
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
+  <property name="iconSize">
+   <size>
+    <width>24</width>
+    <height>24</height>
+   </size>
+  </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonTextBesideIcon</enum>
   </property>
@@ -30,29 +36,6 @@
       <item>
        <layout class="QVBoxLayout" name="settingsGroup">
         <item>
-         <widget class="QCheckBox" name="checkEthernet">
-          <property name="text">
-           <string>Ethernet</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="checkBluetooth">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Bluetooth</string>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
            <string>Security</string>
@@ -61,35 +44,49 @@
            <item>
             <widget class="QRadioButton" name="radioAllowed">
              <property name="text">
-              <string>Allow allowed</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioBlocked">
-             <property name="text">
-              <string>Block blocked</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioOne">
-             <property name="text">
-              <string>Allow one</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioAll">
-             <property name="text">
-              <string>Allow all</string>
+              <string>A&amp;llow allowed</string>
              </property>
              <property name="checked">
               <bool>true</bool>
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QRadioButton" name="radioBlocked">
+             <property name="text">
+              <string>&amp;Block blocked</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioAll">
+             <property name="text">
+              <string>Allow &amp;all</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
           </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="notifyCheckBox">
+          <property name="text">
+           <string>Show &amp;notification
+when a client connected</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="hiddenCheckBox">
+          <property name="text">
+           <string>Hidden mode</string>
+          </property>
          </widget>
         </item>
         <item>
@@ -111,8 +108,14 @@
        <layout class="QVBoxLayout" name="allowGroup">
         <item>
          <widget class="QLabel" name="labelAllowedList">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
-           <string>Allowed clients</string>
+           <string>Clients</string>
           </property>
           <property name="buddy">
            <cstring>listAllowed</cstring>
@@ -122,25 +125,39 @@
         <item>
          <widget class="QListWidget" name="listAllowed"/>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="blockGroup">
         <item>
-         <widget class="QLabel" name="labelBlockedList">
-          <property name="mouseTracking">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Blocked clients</string>
-          </property>
-          <property name="buddy">
-           <cstring>listBlocked</cstring>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="listBlocked"/>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="pushButton_allow">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Allo&amp;w</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_deny">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Den&amp;y</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_remove">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>&amp;Remove</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -162,19 +179,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="buttonApply">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Apply</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="buttonToggle">
         <property name="text">
-         <string>Start server</string>
+         <string>&amp;Start server</string>
         </property>
        </widget>
       </item>
@@ -187,7 +194,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>437</width>
+     <width>491</width>
      <height>25</height>
     </rect>
    </property>
@@ -205,46 +212,14 @@
  <resources/>
  <connections>
   <connection>
-   <sender>checkEthernet</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeSettings()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>78</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>106</x>
-     <y>294</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBluetooth</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeSettings()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>53</x>
-     <y>88</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>62</x>
-     <y>293</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>radioAllowed</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>changeSettings()</slot>
+   <slot>onSettingsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>42</x>
-     <y>140</y>
+     <x>70</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>31</x>
@@ -256,11 +231,11 @@
    <sender>radioBlocked</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>changeSettings()</slot>
+   <slot>onSettingsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>104</x>
-     <y>168</y>
+     <x>132</x>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel">
      <x>125</x>
@@ -269,30 +244,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioOne</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeSettings()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>76</x>
-     <y>199</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>82</x>
-     <y>307</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>radioAll</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>changeSettings()</slot>
+   <slot>onSettingsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>91</x>
-     <y>225</y>
+     <x>119</x>
+     <y>151</y>
     </hint>
     <hint type="destinationlabel">
      <x>48</x>
@@ -300,8 +259,93 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>listAllowed</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onListWidgetSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>298</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_allow</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>allowSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>235</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>306</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_deny</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>denySelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>182</x>
+     <y>306</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_remove</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removeSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>420</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>306</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hiddenCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>hideServer()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>92</x>
+     <y>229</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>changeSettings()</slot>
+  <slot>onSettingsChanged()</slot>
+  <slot>onListWidgetSelectionChanged()</slot>
+  <slot>allowSelected()</slot>
+  <slot>denySelected()</slot>
+  <slot>removeSelected()</slot>
+  <slot>hideServer()</slot>
  </slots>
 </ui>

@@ -1,18 +1,27 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
+#include <QSettings>
+
+// Global:
 
 MainWindow *instance = 0;
 
-void new_client(char* str){
-    QString name(str);
-    instance->showConnectedNotification(name);
+void new_client(char* _name, char* _address){
+    QString name(_name);
+    QString address(_address);
+    instance->addNewClient(name, address);
 }
+
+
+// Public members:
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     instance = this;
+    serverState = Mousoid::WIRELESS_ON;
+    ethernetLimitations = Mousoid::ONLY_FROM_SET_ALLOWED;
     showCloseNotification = true;
     /// @todo init gui signals and slots
 
@@ -29,10 +38,25 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::showConnectedNotification(QString &name)
+void MainWindow::addNewClient(QString &name, QString &address)
 {
-    trayIcon->showMessage(tr("Mousoid"), name + tr(" connected"), QSystemTrayIcon::Information);
+    QString a(name+" ("+address+")");
+    if(ui->notifyCheckBox->isChecked()){
+        trayIcon->showMessage(tr("Mousoid"), a + tr(" connected"), QSystemTrayIcon::Information);
+    }
+
+    QList<QListWidgetItem*> l = ui->listAllowed->findItems(address, Qt::MatchContains);
+    if(l.isEmpty()){
+        QListWidgetItem *item = new QListWidgetItem(a, ui->listAllowed);
+        item->setIcon(QIcon::fromTheme("help-contents"));
+        ui->listAllowed->insertItem(0, item);
+    } else {
+        l.first()->setText(a);
+    }
 }
+
+
+// Private members:
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -52,8 +76,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::initializeWindow()
 {
-    serverState = Mousoid::WIRELESS_ON;
-    ethernetLimitations = Mousoid::NO_LIMITATION;
     ui->setupUi(this);
 
     actionQuit = new QAction(QIcon::fromTheme("exit"), tr("Exit"), this);
@@ -64,7 +86,6 @@ void MainWindow::initializeWindow()
     connect(actionToggleWindow, SIGNAL(triggered()), this, SLOT(toggleWindow()));
     connect(actionQuit, SIGNAL(triggered()), this, SLOT(quit()));
     connect(ui->buttonToggle, SIGNAL(clicked()), this, SLOT(toggleServer()));
-    connect(ui->buttonApply, SIGNAL(clicked()), this, SLOT(applyChanges()));
 }
 
 void MainWindow::initializeSysTray()
@@ -88,19 +109,26 @@ void MainWindow::initializeSysTray()
     trayIcon->show();
 }
 
+void MainWindow::refreshLimitations()
+{
+    // todo
+}
+
+
+// Slots:
+
 void MainWindow::toggleServer()
 {
     serverState ^= Mousoid::SERVER_ENABLED;
     if(serverState & Mousoid::SERVER_ENABLED){
-        ui->buttonToggle->setText(tr("Stop server"));
-        actionToggleServer->setText(tr("Stop server"));
+        ui->buttonToggle->setText(tr("&Stop server"));
+        actionToggleServer->setText(tr("&Stop server"));
     }else{
-        ui->buttonToggle->setText(tr("Start server"));
-        actionToggleServer->setText(tr("Start server"));
+        ui->buttonToggle->setText(tr("&Start server"));
+        actionToggleServer->setText(tr("&Start server"));
     }
     MousoidCore::changeServerState(serverState);
     MousoidCore::changeLimitations(ethernetLimitations);
-    ui->buttonApply->setDisabled(true);
 }
 
 void MainWindow::toggleWindow()
@@ -120,36 +148,26 @@ void MainWindow::toggleWindow()
 void MainWindow::applyChanges()
 {
     /// @todo getState getLimitations
-    ui->buttonApply->setDisabled(true);
     MousoidCore::changeServerState(serverState);
     MousoidCore::changeLimitations(ethernetLimitations);
 }
 
-void MainWindow::changeSettings()
+void MainWindow::onSettingsChanged()
 {
-    ui->buttonApply->setEnabled(true);
-    if(ui->checkEthernet->isChecked()){
-        serverState |= Mousoid::WIRELESS_ON;
-    }
-    else{
-        serverState &= ~Mousoid::WIRELESS_ON;
-    }
-    if(ui->checkBluetooth->isChecked()){
-        serverState |= Mousoid::BLUETOOTH_ON;
-    }
-    else{
-        serverState &= ~Mousoid::BLUETOOTH_ON;
-    }
+//    if(ui->checkEthernet->isChecked()){
+//        serverState |= Mousoid::WIRELESS_ON;
+//    }
+//    else{
+//        serverState &= ~Mousoid::WIRELESS_ON;
+//    }
     if(ui->radioAll->isChecked()){
         ethernetLimitations = Mousoid::NO_LIMITATION;
-    }else if (ui->radioOne->isChecked()) {
-        ethernetLimitations = Mousoid::ONLY_ONE_ALLOWED;
     }else if (ui->radioAllowed->isChecked()) {
         ethernetLimitations = Mousoid::ONLY_FROM_SET_ALLOWED;
     }else if (ui->radioBlocked->isChecked()) {
         ethernetLimitations = Mousoid::ONLY_FROM_SET_BLOCKED;
     }
-
+    applyChanges();
 }
 
 void MainWindow::quit()
@@ -157,5 +175,47 @@ void MainWindow::quit()
     /// @todo write settings
     MousoidCore::destroy();
     qApp->quit();
+}
+
+void MainWindow::onListWidgetSelectionChanged()
+{
+    bool b = ui->listAllowed->selectedItems().length() > 0;
+    ui->pushButton_deny->setEnabled(b);
+    ui->pushButton_allow->setEnabled(b);
+    ui->pushButton_remove->setEnabled(b);
+}
+
+void MainWindow::allowSelected()
+{
+    QListWidgetItem *item = ui->listAllowed->currentItem();
+    QString addr = item->text();
+    addr.remove(0, addr.lastIndexOf('(')+1).chop(1);
+    MousoidCore::addToAllowed(addr);
+    item->setIcon(QIcon::fromTheme("dialog-ok"));
+}
+
+void MainWindow::denySelected()
+{
+    QListWidgetItem *item = ui->listAllowed->currentItem();
+    QString addr = item->text();
+    addr.remove(0, addr.lastIndexOf('(')+1).chop(1);
+    MousoidCore::addToBlocked(addr);
+    item->setIcon(QIcon::fromTheme("stop"));
+}
+
+void MainWindow::removeSelected()
+{
+    QListWidgetItem *item = ui->listAllowed->currentItem();
+    QString addr = item->text();
+    addr.remove(0, addr.lastIndexOf('(')+1).chop(1);
+    MousoidCore::removeFromSets(addr);
+    ui->listAllowed->removeItemWidget(item);
+    delete item;
+}
+
+void MainWindow::hideServer()
+{
+    serverState ^= Mousoid::HIDDEN_MODE;
+    MousoidCore::changeServerState(serverState);
 }
 

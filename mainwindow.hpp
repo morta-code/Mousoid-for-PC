@@ -20,21 +20,26 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void showConnectedNotification(QString &name);
-
-protected:
-    void closeEvent(QCloseEvent *event);
+    void addNewClient(QString &name, QString &address);
 
 public slots:
     void toggleServer();
     void toggleWindow();
     void applyChanges();
-    void changeSettings();
+    void onSettingsChanged();
     void quit();
+    void onListWidgetSelectionChanged();
+    void allowSelected();
+    void denySelected();
+    void removeSelected();
+    void hideServer();
 
 private:
+    void closeEvent(QCloseEvent *event);
     void initializeWindow();
     void initializeSysTray();
+    void refreshLimitations();
+    // load limitations to server
 
     Ui::MainWindow *ui;
     uchar serverState;
