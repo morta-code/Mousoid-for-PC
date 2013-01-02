@@ -3,7 +3,6 @@
 
 #include <QSystemTrayIcon>
 #include <QMainWindow>
-#include <QDebug>
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <mousoidcore.hpp>
@@ -38,8 +37,8 @@ private:
     void closeEvent(QCloseEvent *event);
     void initializeWindow();
     void initializeSysTray();
-    void refreshLimitations();
-    // load limitations to server
+    void saveSettings();
+    void loadSettings();
 
     Ui::MainWindow *ui;
     uchar serverState;
@@ -52,6 +51,14 @@ private:
     QAction *actionToggleWindow;
     QAction *actionToggleServer;
     QAction *actionQuit;
+
+    QIcon questionIcon;
+    QIcon allowedIcon;
+    QIcon deniededIcon;
+    QIcon quitIcon;
+    QIcon hideIcon;
+    QIcon restoreIcon;
+
 };
 
 #endif // MAINWINDOW_HPP

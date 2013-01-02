@@ -21,16 +21,20 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     instance = this;
     serverState = Mousoid::WIRELESS_ON;
-    ethernetLimitations = Mousoid::ONLY_FROM_SET_ALLOWED;
     showCloseNotification = true;
-    /// @todo init gui signals and slots
 
-    /// @todo name itt és ott
+    questionIcon = QIcon::fromTheme("help-contents");
+    allowedIcon = QIcon::fromTheme("dialog-ok");
+    deniededIcon = QIcon::fromTheme("stop");
+    quitIcon = QIcon::fromTheme("exit");
+    hideIcon = QIcon::fromTheme("window-close");
+    restoreIcon = QIcon::fromTheme("view-restore");
+
     MousoidCore::create();
     MousoidCore::funcForNewClient(new_client);
-
     initializeWindow();
     initializeSysTray();
+    loadSettings();
 }
 
 MainWindow::~MainWindow()
@@ -48,7 +52,7 @@ void MainWindow::addNewClient(QString &name, QString &address)
     QList<QListWidgetItem*> l = ui->listAllowed->findItems(address, Qt::MatchContains);
     if(l.isEmpty()){
         QListWidgetItem *item = new QListWidgetItem(a, ui->listAllowed);
-        item->setIcon(QIcon::fromTheme("help-contents"));
+        item->setIcon(questionIcon);
         ui->listAllowed->insertItem(0, item);
     } else {
         l.first()->setText(a);
@@ -78,8 +82,8 @@ void MainWindow::initializeWindow()
 {
     ui->setupUi(this);
 
-    actionQuit = new QAction(QIcon::fromTheme("exit"), tr("Exit"), this);
-    actionToggleWindow = new QAction(QIcon::fromTheme("window-close"), tr("Hide window"), this);
+    actionQuit = new QAction(quitIcon, tr("Exit"), this);
+    actionToggleWindow = new QAction(hideIcon, tr("Hide window"), this);
     ui->mainToolBar->addAction(actionQuit);
     ui->mainToolBar->addAction(actionToggleWindow);
 
@@ -109,9 +113,77 @@ void MainWindow::initializeSysTray()
     trayIcon->show();
 }
 
-void MainWindow::refreshLimitations()
+void MainWindow::saveSettings()
 {
-    // todo
+    QSettings settings("morta-code", "Mousoid");
+    settings.beginGroup("Server");
+    settings.setValue("limitation", ethernetLimitations);
+    settings.setValue("hidden", ui->hiddenCheckBox->isChecked());
+    QList<QListWidgetItem*> l = ui->listAllowed->findItems(" ", Qt::MatchContains);
+    QString val_b;
+    QString val_a;
+    foreach (QListWidgetItem *i, l) {
+        if(i->icon().name() == allowedIcon.name())
+            val_a.append(i->text() + "%%%%");
+        if(i->icon().name() == deniededIcon.name())
+            val_b.append(i->text() + "%%%%");
+    }
+    settings.setValue("blocked", val_b);
+    settings.setValue("allowed", val_a);
+    settings.endGroup();
+
+    settings.beginGroup("Window");
+    settings.setValue("geometry", this->geometry());
+    settings.setValue("closenotification", showCloseNotification);
+    settings.setValue("systrayNotify", ui->notifyCheckBox->isChecked());
+    settings.endGroup();
+}
+
+void MainWindow::loadSettings()
+{
+    QSettings settings("morta-code", "Mousoid");
+    settings.beginGroup("Server");
+    if(settings.value("hidden", false).toBool()){
+        ui->hiddenCheckBox->setChecked(true);
+    }
+
+    ethernetLimitations = (settings.value("limitation", Mousoid::ONLY_FROM_SET_ALLOWED).toInt());
+    switch (ethernetLimitations) {
+    case Mousoid::NO_LIMITATION:
+        ui->radioAll->setChecked(true);
+        break;
+    case Mousoid::ONLY_FROM_SET_ALLOWED:
+        ui->radioAllowed->setChecked(true);
+        break;
+    case Mousoid::ONLY_FROM_SET_BLOCKED:
+        ui->radioBlocked->setChecked(true);
+        break;
+    }
+    QString val_b = settings.value("blocked", QString()).toString();
+    QString val_a = settings.value("allowed", QString()).toString();
+
+    foreach (QString str, val_a.split("%%%%")) {
+        if(str.isEmpty())
+            continue;
+        QListWidgetItem *item = new QListWidgetItem(str, ui->listAllowed);
+        item->setIcon(allowedIcon);
+        ui->listAllowed->insertItem(0, item);
+    }
+    foreach (QString str, val_b.split("%%%%")) {
+        if(str.isEmpty())
+            continue;
+        QListWidgetItem *item = new QListWidgetItem(str, ui->listAllowed);
+        item->setIcon(deniededIcon);
+        ui->listAllowed->insertItem(0, item);
+    }
+
+    settings.endGroup();
+
+    settings.beginGroup("Window");
+    setGeometry(settings.value("geometry", QRect(10, 10, 490, 345)).toRect());
+    showCloseNotification = settings.value("closenotification", true).toBool();
+    ui->notifyCheckBox->setChecked(settings.value("systrayNotify", true).toBool());
+    settings.endGroup();
 }
 
 
@@ -127,39 +199,32 @@ void MainWindow::toggleServer()
         ui->buttonToggle->setText(tr("&Start server"));
         actionToggleServer->setText(tr("&Start server"));
     }
-    MousoidCore::changeServerState(serverState);
     MousoidCore::changeLimitations(ethernetLimitations);
+    MousoidCore::changeServerState(serverState);
 }
 
 void MainWindow::toggleWindow()
 {
     if(this->isHidden()){
         actionToggleWindow->setText(tr("Hide window"));
-        actionToggleWindow->setIcon(QIcon::fromTheme("window-close"));
+        actionToggleWindow->setIcon(hideIcon);
         showNormal();
     }
     else{
         actionToggleWindow->setText(tr("Restore window"));
-        actionToggleWindow->setIcon(QIcon::fromTheme("view-restore"));
+        actionToggleWindow->setIcon(restoreIcon);
         hide();
     }
 }
 
 void MainWindow::applyChanges()
 {
-    /// @todo getState getLimitations
-    MousoidCore::changeServerState(serverState);
     MousoidCore::changeLimitations(ethernetLimitations);
+    MousoidCore::changeServerState(serverState);
 }
 
 void MainWindow::onSettingsChanged()
 {
-//    if(ui->checkEthernet->isChecked()){
-//        serverState |= Mousoid::WIRELESS_ON;
-//    }
-//    else{
-//        serverState &= ~Mousoid::WIRELESS_ON;
-//    }
     if(ui->radioAll->isChecked()){
         ethernetLimitations = Mousoid::NO_LIMITATION;
     }else if (ui->radioAllowed->isChecked()) {
@@ -172,7 +237,7 @@ void MainWindow::onSettingsChanged()
 
 void MainWindow::quit()
 {
-    /// @todo write settings
+    saveSettings();
     MousoidCore::destroy();
     qApp->quit();
 }
@@ -191,7 +256,7 @@ void MainWindow::allowSelected()
     QString addr = item->text();
     addr.remove(0, addr.lastIndexOf('(')+1).chop(1);
     MousoidCore::addToAllowed(addr);
-    item->setIcon(QIcon::fromTheme("dialog-ok"));
+    item->setIcon(allowedIcon);
 }
 
 void MainWindow::denySelected()
@@ -200,7 +265,7 @@ void MainWindow::denySelected()
     QString addr = item->text();
     addr.remove(0, addr.lastIndexOf('(')+1).chop(1);
     MousoidCore::addToBlocked(addr);
-    item->setIcon(QIcon::fromTheme("stop"));
+    item->setIcon(deniededIcon);
 }
 
 void MainWindow::removeSelected()
