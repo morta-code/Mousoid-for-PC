@@ -23,13 +23,12 @@ MainWindow::MainWindow(QWidget *parent) :
     serverState = Mousoid::WIRELESS_ON;
     showCloseNotification = true;
 
-    questionIcon = QIcon::fromTheme("help-contents");
-    allowedIcon = QIcon::fromTheme("dialog-ok");
-    deniededIcon = QIcon::fromTheme("stop");
+    questionIcon = QIcon::fromTheme("help-contents", QIcon(":/mousoid/886.ico"));
+    allowedIcon = QIcon::fromTheme("dialog-ok", QIcon(":/mousoid/912.ico"));
+    deniededIcon = QIcon::fromTheme("stop", QIcon(":/mousoid/899.ico"));
     quitIcon = QIcon::fromTheme("exit");
     hideIcon = QIcon::fromTheme("window-close");
     restoreIcon = QIcon::fromTheme("view-restore");
-
     MousoidCore::create();
     MousoidCore::funcForNewClient(new_client);
     initializeWindow();
@@ -123,9 +122,9 @@ void MainWindow::saveSettings()
     QString val_b;
     QString val_a;
     foreach (QListWidgetItem *i, l) {
-        if(i->icon().name() == allowedIcon.name())
+        if(i->icon().cacheKey() == allowedIcon.cacheKey())
             val_a.append(i->text() + "%%%%");
-        if(i->icon().name() == deniededIcon.name())
+        if(i->icon().cacheKey() == deniededIcon.cacheKey())
             val_b.append(i->text() + "%%%%");
     }
     settings.setValue("blocked", val_b);
