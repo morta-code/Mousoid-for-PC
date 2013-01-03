@@ -73,9 +73,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
                 == 1){
             showCloseNotification = false;
         }
-        toggleWindow();
         event->ignore();
     }
+    toggleWindow();
 }
 
 void MainWindow::initializeWindow()
