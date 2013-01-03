@@ -168,6 +168,8 @@ void MainWindow::loadSettings()
         QListWidgetItem *item = new QListWidgetItem(str, ui->listAllowed);
         item->setIcon(allowedIcon);
         ui->listAllowed->insertItem(0, item);
+        str.remove(0, str.lastIndexOf('(')+1).chop(1);
+        MousoidCore::addToAllowed(str);
     }
     foreach (QString str, val_b.split("%%%%")) {
         if(str.isEmpty())
@@ -175,6 +177,8 @@ void MainWindow::loadSettings()
         QListWidgetItem *item = new QListWidgetItem(str, ui->listAllowed);
         item->setIcon(deniededIcon);
         ui->listAllowed->insertItem(0, item);
+        str.remove(0, str.lastIndexOf('(')+1).chop(1);
+        MousoidCore::addToBlocked(str);
     }
 
     settings.endGroup();
